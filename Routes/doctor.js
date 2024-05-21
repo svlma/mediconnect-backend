@@ -11,8 +11,7 @@ import reviewRouter from "./review.js";
 
 const router = express.Router();
 //nested route
-router.use("/:doctorId/reviews", reviewRouter);
-
+router.use("/:id/reviews", reviewRouter);
 router.get("/:id", getSingleDoctor);
 router.get("/", getAllDoctor);
 router.put("/:id", authenticate, restrict(["doctor"]), updateDoctor);

@@ -18,7 +18,7 @@ export const getCheckoutSession = async (req, res) => {
       success_url: `${process.env.CLIENT_SITE_URL}/checkout-success`,
       cancel_url: `${req.protocol}://${req.get("host")}/doctors/${doctor.id}`,
       customer_email: user.email,
-      client_reference_id: req.params.doctorId,
+      client_reference_id: doctor.id,
       line_items: [
         {
           price_data: {
@@ -50,10 +50,8 @@ export const getCheckoutSession = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Successfully paid", session });
   } catch (err) {
-    console.log(err);
     res
       .status(500)
       .json({ success: false, message: "Error creating checkout session" });
   }
-  Key;
 };
