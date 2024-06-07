@@ -1,7 +1,7 @@
 import Booking from "../models/BookingSchema.js";
 import Doctor from "../models/DoctorSchema.js";
-//Update Doctor
 
+// Update Doctor
 export const updateDoctor = async (req, res) => {
   const id = req.params.id;
 
@@ -14,27 +14,28 @@ export const updateDoctor = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "successfully updated",
+      message: "Successfully updated",
       data: updateDoctor,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "failed to update" });
+    res.status(500).json({ success: false, message: "Failed to update" });
   }
 };
 
-//Delete Doctor
+// Delete Doctor
 export const deleteDoctor = async (req, res) => {
   const id = req.params.id;
 
   try {
     await Doctor.findByIdAndDelete(id);
 
-    res.status(200).json({ success: true, message: "successfully deleted" });
+    res.status(200).json({ success: true, message: "Successfully deleted" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "failed to delete" });
+    res.status(500).json({ success: false, message: "Failed to delete" });
   }
 };
-//Get one Doctor
+
+// Get one Doctor
 export const getSingleDoctor = async (req, res) => {
   const id = req.params.id;
 
@@ -51,10 +52,10 @@ export const getSingleDoctor = async (req, res) => {
   }
 };
 
-//Get All Doctors
+// Get All Doctors
 export const getAllDoctor = async (req, res) => {
   try {
-    const { query } = req.query;
+    const { query, location } = req.query;
     let doctors;
 
     if (query) {
@@ -63,7 +64,13 @@ export const getAllDoctor = async (req, res) => {
         $or: [
           { name: { $regex: query, $options: "i" } },
           { specialization: { $regex: query, $options: "i" } },
+          { location: { $regex: query, $options: "i" } },
         ],
+      }).select("-password");
+    } else if (location) {
+      doctors = await Doctor.find({
+        isApproved: "approved",
+        location: { $regex: location, $options: "i" },
       }).select("-password");
     } else {
       doctors = await Doctor.find({ isApproved: "approved" }).select(
@@ -79,6 +86,7 @@ export const getAllDoctor = async (req, res) => {
   }
 };
 
+// Get Doctor Profile
 export const getDoctorProfile = async (req, res) => {
   const doctorId = req.userId;
   try {
@@ -101,6 +109,37 @@ export const getDoctorProfile = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ success: false, message: "Something went wrong,cannot get " });
+      .json({ success: false, message: "Something went wrong, cannot get " });
+  }
+};
+
+// Get Doctors by Location
+export const getDoctorsByLocation = async (req, res) => {
+  const { location } = req.query;
+
+  try {
+    if (!location) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Location query parameter is required",
+        });
+    }
+
+    const doctors = await Doctor.find({
+      isApproved: "approved",
+      location: { $regex: location, $options: "i" },
+    }).select("-password");
+
+    res.status(200).json({
+      success: true,
+      message: "Doctors found",
+      data: doctors,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to retrieve doctors" });
   }
 };

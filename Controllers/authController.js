@@ -14,7 +14,7 @@ export const register = async (req, res) => {
     const { email, password, name, role, photo, gender } = req.body;
     try {
         let user = null;
-        if (role == 'patient') {
+        if (role == 'patient'|| role === 'admin') {
             user = await User.findOne({ email });
         } else if (role == 'doctor') {
             user = await Doctor.findOne({ email });
@@ -29,7 +29,7 @@ export const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt); // Correct usage of bcrypt for hashing
 
-        if (role == 'patient') {
+        if (role == 'patient' || role === 'admin') {
             user = new User({
                 name,
                 email,

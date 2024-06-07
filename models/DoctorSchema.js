@@ -24,6 +24,7 @@ const DoctorSchema = new mongoose.Schema({
   bio: { type: String, maxLength: 50 },
   about: { type: String },
   timeSlots: { type: Array },
+  location: { type: String }, // Nouveau champ pour la localisation
   reviews: [{ type: mongoose.Types.ObjectId, ref: "Review" }],
   averageRating: {
     type: Number,
